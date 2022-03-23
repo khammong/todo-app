@@ -11,9 +11,13 @@ import {
   updateTodoListRequest
 } from './store/actions/todoList'
 
-function Todo({ todo, index, completeTodo, removeTodo, handleEditTodo }) {
+const handleRepeatDotEle = () => {
+  let card = [...Array(3)].map((i) => <div key={i} className="oval" />)
+  return card
+}
+
+function Todo({ todo, index, completeTodo, removeTodo, handleEditTodo, isEdit, setIsEdit }) {
   const [checked, setChecked] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
   return (
     <div
       className="todo"
@@ -32,7 +36,7 @@ function Todo({ todo, index, completeTodo, removeTodo, handleEditTodo }) {
       <div className='menu-nav'>
         <div className="menu-item" />
         <div className="dropdown-container" tabIndex="-1">
-          <div className="three-dots"></div>
+          {handleRepeatDotEle()}
           <div className="dropdown">
             <div className='dropdown-list' onClick={() => setIsEdit(true)}>Edit</div>
             <div className='dropdown-list' onClick={() => removeTodo(index)}>Delete</div>
@@ -99,6 +103,7 @@ function App() {
   const dispatch = useDispatch()
   const todoList = useSelector((state) => state.todoList.todoList)
   const [option, setOption] = useState('All')
+  const [isEdit, setIsEdit] = useState(false);
 
   useEffect(() => {
     dispatch(getTodoListRequest())
@@ -122,6 +127,7 @@ function App() {
 
   const completeTodo = (title, index, e) => {
     dispatch(completeTodoListRequest({id: index, title, completed: e}))
+    setIsEdit(false)
   };
 
   const removeTodo = index => {
@@ -146,14 +152,14 @@ function App() {
       <div className="action">
         <div className="title">Task</div>
         <div className="select">
-          <select id="animal"
+          <select
             value={option}
             onChange={e => setOption(e.target.value)}
             onBlur={e => setOption(e.target.value)}
           >
-            <option value='All'>All</option>
-            <option value='Completed'>Done</option>
-            <option value='Incomplete'>Undone</option>
+            <option className='option-list' value='All'>All</option>
+            <option className='option-list' value='Completed'>Done</option>
+            <option className='option-list' value='Incomplete'>Undone</option>
           </select>
         </div>
       </div>
@@ -165,6 +171,8 @@ function App() {
             completeTodo={completeTodo}
             removeTodo={removeTodo}
             handleEditTodo={handleEditTodo}
+            isEdit={isEdit}
+            setIsEdit={setIsEdit}
           />
         )): "loading ..."}
         <TodoForm addTodo={addTodo} />

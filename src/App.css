@@ -1,7 +1,11 @@
 .app {
   background: #D1D0D9;
-  height: 100vh;
-  padding: 30px;
+  height: 100%;
+  font-family: "Roboto", sans-serif !important;
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 16px;
 }
 
 .todo-list {
@@ -37,7 +41,6 @@
 }
 
 .action .title {
-  font-family: 'Roboto';
   font-style: normal;
   font-weight: 500;
   font-size: 24px;
@@ -47,17 +50,13 @@
 }
 
 .complete-bar {
-  font-family: 'Roboto';
-  font-style: normal;
   font-weight: 400;
-  font-size: 16px;
   line-height: 19px;
 
   color: #EBB9B8;
 }
 
 .title {
-  font-family: 'Roboto';
   font-style: normal;
   font-weight: 500;
   font-size: 28px;
@@ -69,10 +68,18 @@ form {
   display: grid;
 }
 
+select {
+  background: #FFFFFF;
+  border-radius: 10px;
+  padding: 7px;
+  border: none;
+}
+
 .input {
   padding: 14px 20px;
   background: #FFFFFF;
   border-radius: 9999px;
+  border: none;
 }
 
 .menu-nav {
@@ -86,12 +93,14 @@ form {
   padding: 3px;
 }
 
-.three-dots:after {
+.oval {
   cursor: pointer;
-  color: #444;
-  content: '\2807';
-  font-size: 20px;
-  padding: 0 5px;
+  width: 6px;
+  height: 6px;
+  margin: 0 3px 0 0;
+  border-radius: 50%;
+  background-color: #9796A8;
+  display: -webkit-inline-box;
 }
 
 .dropdown {
