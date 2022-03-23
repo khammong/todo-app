@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import {useDispatch, useSelector} from 'react-redux'
-import { SUCCESS, FAILURE, PENDING } from './utils/const'
+import { SUCCESS, PENDING } from './utils/const'
 import "./App.css";
 
 import { 
@@ -98,40 +98,67 @@ function App() {
   const dispatch = useDispatch()
   const todoList = useSelector((state) => state.todoList.todoList)
   const [option, setOption] = useState('All')
-
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     dispatch(getTodoListRequest())
-  }, [dispatch])
+    setIsLoading(false);
+    
+  }, [])
 
   useEffect(() => {
     if (addTodoListRequest.status === SUCCESS) {
-      dispatch(completeTodoListRequest({completed: false}))
+      setIsLoading(false);
+      dispatch(getTodoListRequest())
     }
-  }, [dispatch])
+  }, [])
 
   useEffect(() => {
-    if (updateTodoListRequest.status === SUCCESS) {
-      dispatch(completeTodoListRequest({completed: false}))
+    if (updateTodoListRequest.status === PENDING) {
+      setIsLoading(true);
+    }else if (updateTodoListRequest.status === SUCCESS) {
+      setIsLoading(false);
+      dispatch(getTodoListRequest())
     }
-  }, [dispatch])
+  }, [])
+
+  useEffect(() => {
+    if (completeTodoListRequest.status === PENDING) {
+      setIsLoading(true);
+    }else if(completeTodoListRequest.status === SUCCESS) {
+      setIsLoading(false);
+      dispatch(getTodoListRequest())
+    }
+  }, [])
+
+  useEffect(() => {
+    if (deleteTodoListRequest.status === PENDING) {
+      setIsLoading(true);
+    }else if(deleteTodoListRequest.status === SUCCESS) {
+      setIsLoading(false);
+      dispatch(getTodoListRequest())
+    }
+  }, [])
 
   const addTodo = title => {
     dispatch(addTodoListRequest({title, completed: false}))
+    dispatch(getTodoListRequest())
   };
 
   const completeTodo = (title, index, e) => {
     dispatch(completeTodoListRequest({id: index, title, completed: e}))
+    dispatch(getTodoListRequest())
   };
 
   const removeTodo = index => {
     dispatch(deleteTodoListRequest(index))
+    dispatch(getTodoListRequest())
   };
 
   const handleEditTodo = (index, title) => {
     dispatch(updateTodoListRequest({id: index, title, completed: false}))
+    dispatch(getTodoListRequest())
   }
 
-  let isLoading = todoList.status === PENDING
   const result = todoList.data.filter(status => status.completed === true);
   const percent = Math.floor((result.length / todoList.data.length) * 100)
   
