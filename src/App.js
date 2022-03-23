@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import {useDispatch, useSelector} from 'react-redux'
-import { SUCCESS, FAILURE } from './utils/const'
+import { SUCCESS, FAILURE, PENDING } from './utils/const'
 import "./App.css";
 
 import { 
@@ -11,16 +11,33 @@ import {
   updateTodoListRequest
 } from './store/actions/todoList'
 
-function Todo({ todo, index, completeTodo, removeTodo }) {
+function Todo({ todo, index, completeTodo, removeTodo, handleEditTodo }) {
+  const [checked, setChecked] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
   return (
     <div
       className="todo"
-      style={{ textDecoration: todo.completed ? "line-through" : "" }}
     >
-      {todo.title}
-      <div>
-        <button onClick={() => completeTodo(todo.title, index)}>Complete</button>
-        <button onClick={() => removeTodo(index)}>x</button>
+      <input
+        type="checkbox"
+        checked={todo.completed ? true: checked}
+        onChange={e => setChecked(e.target.checked)}
+        onBlur={(e) => completeTodo(todo.title, index, e.target.checked)}
+      />
+      {isEdit? 
+      <EditTodoForm handleEditTodo={handleEditTodo} title={todo.title} id={index}  />: 
+      
+      <div style={{ textDecoration: todo.completed ? "line-through" : "" }}>{todo && todo.title}</div>
+      }
+      <div className='menu-nav'>
+        <div className="menu-item" />
+        <div className="dropdown-container" tabIndex="-1">
+          <div className="three-dots"></div>
+          <div className="dropdown">
+            <div className='dropdown-list' onClick={() => setIsEdit(true)}>Edit</div>
+            <div className='dropdown-list' onClick={() => removeTodo(index)}>Delete</div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -49,23 +66,39 @@ function TodoForm({ addTodo }) {
   );
 }
 
+function EditTodoForm({ handleEditTodo, title, id }) {
+  const [value, setValue] = React.useState(title);
+
+  const handleSubmit = e => {
+    e.preventDefault();
+    if (!value) return;
+    handleEditTodo(id, value);
+    setValue("");
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div className='edit-component'>
+        <input
+          type="text"
+          className="input"
+          value={value}
+          onChange={e => setValue(e.target.value)}
+          placeholder="Add your todo..."
+        />
+        <button 
+          className='edit-button' 
+          onClick={() => handleEditTodo(id, value)}
+        >Save</button>
+      </div>
+    </form>
+  );
+}
+
 function App() {
   const dispatch = useDispatch()
   const todoList = useSelector((state) => state.todoList.todoList)
-  // const [todos, setTodos] = React.useState([
-  //   {
-  //     text: "Learn about React",
-  //     isCompleted: false
-  //   },
-  //   {
-  //     text: "Meet friend for lunch",
-  //     isCompleted: false
-  //   },
-  //   {
-  //     text: "Build really cool todo app",
-  //     isCompleted: false
-  //   }
-  // ]);
+  const [option, setOption] = useState('All')
 
   useEffect(() => {
     dispatch(getTodoListRequest())
@@ -87,13 +120,18 @@ function App() {
     dispatch(addTodoListRequest({title, completed: false}))
   };
 
-  const completeTodo = (title, index) => {
-    dispatch(completeTodoListRequest({id: index, completed: true}))
+  const completeTodo = (title, index, e) => {
+    dispatch(completeTodoListRequest({id: index, title, completed: e}))
   };
 
   const removeTodo = index => {
     dispatch(deleteTodoListRequest(index))
   };
+
+  const handleEditTodo = (index, title) => {
+    dispatch(updateTodoListRequest({id: index, title, completed: false}))
+  }
+  let isLoading = todoList.status === PENDING
 
   return (
     <div className="app">
@@ -103,29 +141,32 @@ function App() {
           Progress
         </div>
         <div className="progress-bar">progress bar</div>
-        <div className="complete-bar">{todoList.data.length} completed</div>
+        <div className="complete-bar"> show completed</div>
       </div>
       <div className="action">
         <div className="title">Task</div>
-        //TODO filter by completed todoList.data.filter((todo)
         <div className="select">
-            <select>
-            <option >All</option>
-            <option>Done</option>
-            <option>Undone</option>
+          <select id="animal"
+            value={option}
+            onChange={e => setOption(e.target.value)}
+            onBlur={e => setOption(e.target.value)}
+          >
+            <option value='All'>All</option>
+            <option value='Completed'>Done</option>
+            <option value='Incomplete'>Undone</option>
           </select>
-          
         </div>
       </div>
-        {todoList.data.map((todo) => (
+        {!isLoading ? todoList.data.map((todo) => (
           <Todo
             key={todo.id}
             index={todo.id}
             todo={todo}
             completeTodo={completeTodo}
             removeTodo={removeTodo}
+            handleEditTodo={handleEditTodo}
           />
-        ))}
+        )): "loading ..."}
         <TodoForm addTodo={addTodo} />
       </div>
     </div>
