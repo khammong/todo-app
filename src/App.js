@@ -27,7 +27,7 @@ function Todo({ todo, index, completeTodo, removeTodo, handleEditTodo, checked, 
         onChange={(e) => completeTodo(todo.title, index, e.target.checked)}
       />
       {isEdit?<EditTodoForm handleEditTodo={handleEditTodo} title={todo.title} id={index}  />:
-      <div style={{ textDecoration: todo.completed ? "line-through" : "" }}>{todo.title}</div>}
+      <div style={{ textDecoration: todo.completed ? "line-through": "", color:todo.completed ? "#A9A9A9": "" }}>{todo.title}</div>}
       <div className='menu-nav'>
         <div className="menu-item" />
         <div className="dropdown-container" tabIndex="-1">
