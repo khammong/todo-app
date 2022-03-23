@@ -16,8 +16,7 @@ const handleRepeatDotEle = () => {
   return card
 }
 
-function Todo({ todo, index, completeTodo, removeTodo, handleEditTodo, isEdit, setIsEdit }) {
-  const [checked, setChecked] = useState(false);
+function Todo({ todo, index, completeTodo, removeTodo, handleEditTodo, isEdit, setIsEdit, checked, setChecked }) {
   return (
     <div
       className="todo"
@@ -25,7 +24,6 @@ function Todo({ todo, index, completeTodo, removeTodo, handleEditTodo, isEdit, s
       <input
         type="checkbox"
         checked={todo.completed ? true: checked}
-        onChange={e => setChecked(e.target.checked)}
         onBlur={(e) => completeTodo(todo.title, index, e.target.checked)}
       />
       {isEdit? 
@@ -104,7 +102,7 @@ function App() {
   const todoList = useSelector((state) => state.todoList.todoList)
   const [option, setOption] = useState('All')
   const [isEdit, setIsEdit] = useState(false);
-
+  const [checked, setChecked] = useState(false);
   useEffect(() => {
     dispatch(getTodoListRequest())
   }, [dispatch])
@@ -128,6 +126,7 @@ function App() {
   const completeTodo = (title, index, e) => {
     dispatch(completeTodoListRequest({id: index, title, completed: e}))
     setIsEdit(false)
+    setChecked(!checked)
   };
 
   const removeTodo = index => {
@@ -142,11 +141,15 @@ function App() {
   return (
     <div className="app">
       <div className="todo-list">
-      <div className="progress">
+      <div className="progress-component">
         <div className="title">
           Progress
         </div>
-        <div className="progress-bar">progress bar</div>
+        <div class="progress">
+          <div class="bar" style={{width:"35%"}}>
+            <p class="percent">35%</p>
+          </div>
+        </div>
         <div className="complete-bar"> show completed</div>
       </div>
       <div className="action">
@@ -173,6 +176,8 @@ function App() {
             handleEditTodo={handleEditTodo}
             isEdit={isEdit}
             setIsEdit={setIsEdit}
+            checked={checked}
+            setChecked={setChecked}
           />
         )): "loading ..."}
         <TodoForm addTodo={addTodo} />
