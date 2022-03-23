@@ -16,21 +16,18 @@ const handleRepeatDotEle = () => {
   return card
 }
 
-function Todo({ todo, index, completeTodo, removeTodo, handleEditTodo, isEdit, setIsEdit, checked, setChecked }) {
+function Todo({ todo, index, completeTodo, removeTodo, handleEditTodo, checked, setChecked }) {
+  const [isEdit, setIsEdit] = useState(false);
   return (
-    <div
-      className="todo"
-    >
+    <div className="todo">
       <input
+        className="input-checkbox"
         type="checkbox"
         checked={todo.completed ? true: checked}
-        onBlur={(e) => completeTodo(todo.title, index, e.target.checked)}
+        onChange={(e) => completeTodo(todo.title, index, e.target.checked)}
       />
-      {isEdit? 
-      <EditTodoForm handleEditTodo={handleEditTodo} title={todo.title} id={index}  />: 
-      
-      <div style={{ textDecoration: todo.completed ? "line-through" : "" }}>{todo && todo.title}</div>
-      }
+      {isEdit?<EditTodoForm handleEditTodo={handleEditTodo} title={todo.title} id={index}  />:
+      <div style={{ textDecoration: todo.completed ? "line-through" : "" }}>{todo.title}</div>}
       <div className='menu-nav'>
         <div className="menu-item" />
         <div className="dropdown-container" tabIndex="-1">
@@ -101,8 +98,7 @@ function App() {
   const dispatch = useDispatch()
   const todoList = useSelector((state) => state.todoList.todoList)
   const [option, setOption] = useState('All')
-  const [isEdit, setIsEdit] = useState(false);
-  const [checked, setChecked] = useState(false);
+
   useEffect(() => {
     dispatch(getTodoListRequest())
   }, [dispatch])
@@ -125,8 +121,6 @@ function App() {
 
   const completeTodo = (title, index, e) => {
     dispatch(completeTodoListRequest({id: index, title, completed: e}))
-    setIsEdit(false)
-    setChecked(!checked)
   };
 
   const removeTodo = index => {
@@ -136,8 +130,11 @@ function App() {
   const handleEditTodo = (index, title) => {
     dispatch(updateTodoListRequest({id: index, title, completed: false}))
   }
-  let isLoading = todoList.status === PENDING
 
+  let isLoading = todoList.status === PENDING
+  const result = todoList.data.filter(status => status.completed === true);
+  const percent = Math.floor((result.length / todoList.data.length) * 100)
+  
   return (
     <div className="app">
       <div className="todo-list">
@@ -145,12 +142,10 @@ function App() {
         <div className="title">
           Progress
         </div>
-        <div class="progress">
-          <div class="bar" style={{width:"35%"}}>
-            <p class="percent">35%</p>
-          </div>
+        <div className="progress">
+          <div className="bar" style={{width:`${percent}%`}} />
         </div>
-        <div className="complete-bar"> show completed</div>
+        <div className="complete-bar"> {result.length} completed</div>
       </div>
       <div className="action">
         <div className="title">Task</div>
@@ -174,10 +169,6 @@ function App() {
             completeTodo={completeTodo}
             removeTodo={removeTodo}
             handleEditTodo={handleEditTodo}
-            isEdit={isEdit}
-            setIsEdit={setIsEdit}
-            checked={checked}
-            setChecked={setChecked}
           />
         )): "loading ..."}
         <TodoForm addTodo={addTodo} />

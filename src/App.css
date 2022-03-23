@@ -6,20 +6,21 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 16px;
+  padding: 42px 280px;
 }
 
 .todo-list {
   background: #F5F5F5;
   border-radius: 20px;
-  padding: 42px 280px 58px;
+  padding: 42px 58px;
 }
 
 .todo {
   align-items: center;
   background: #fff;
   border-radius: 9999px;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 40px 1fr 1fr;
   margin-bottom: 6px;
   padding: 14px 20px;
   margin-bottom: 17px;
@@ -29,7 +30,6 @@
   display: grid;
   padding: 20px;
   margin-bottom: 23px;
-
   background: #E07C7C;
   border-radius: 20px;
 }
@@ -45,14 +45,12 @@
   font-weight: 500;
   font-size: 24px;
   line-height: 28px;
-
   color: #000000;
 }
 
 .complete-bar {
   font-weight: 400;
   line-height: 19px;
-
   color: #EBB9B8;
 }
 
@@ -73,6 +71,7 @@ select {
   border-radius: 10px;
   padding: 7px;
   border: none;
+  width: 110px;
 }
 
 .input {
@@ -80,6 +79,47 @@ select {
   background: #FFFFFF;
   border-radius: 9999px;
   border: none;
+}
+
+input[type=checkbox] {
+  position: relative;
+  cursor: pointer;
+}
+
+input:checked {
+  background: #585292 !important;
+  border: 2px solid #585292 !important;
+  box-sizing: border-box;
+  border-radius: 6px;
+  width: 20px;
+  height: 20px;
+}
+
+input[type=checkbox]:before {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 0;
+  left: 0;
+  border: 2px solid #585292;
+  border-radius: 3px;
+  background-color: #FFFFFF;
+}
+input[type=checkbox]:checked:after {
+  content: "";
+  display: block;
+  width: 5px;
+  height: 10px;
+  border: solid #585292;
+  border-width: 0 2px 2px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+  position: absolute;
+  top: 2px;
+  left: 6px;
 }
 
 .menu-nav {
@@ -113,10 +153,14 @@ select {
   opacity: 0;
   z-index: -1;
   max-height: 0;
-  padding: 17px 22px;
 }
+
 .dropdown-list {
-  padding: 16px;
+  padding: 16px 22px;
+}
+
+.dropdown-list:first-child {
+  padding:16px 0px 0px 22px;
 }
 
 .dropdown-container:focus {
@@ -146,15 +190,4 @@ select {
   height:100%;
   background: #FFFFFF;
   border-radius: 999px;
-}
-
-.percent {
-	position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  margin:0;
-  font-family:tahoma,arial,helvetica;
-  font-size:12px;
-  color:white;
 }
